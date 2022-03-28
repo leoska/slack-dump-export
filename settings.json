@@ -1,0 +1,36 @@
+{
+    "userName": "",
+    "token": "",
+    "fileSizeLimit": 20971520,
+    "downloadAvatars": true,
+    "filter": {
+        "ims": {
+            "enabled": true,
+            "timeStampLimit": 0,
+            "include": [],
+            "exclude": [],
+            "downloadFiles": true
+        },
+        "mpims": {
+            "enabled": true,
+            "timeStampLimit": 0,
+            "include": [],
+            "exclude": [],
+            "downloadFiles": true
+        },
+        "privateChannels": {
+            "enabled": true,
+            "timeStampLimit": 0,
+            "include": [],
+            "exclude": [],
+            "downloadFiles": true
+        },
+        "publicChannels": {
+            "enabled": true,
+            "timeStampLimit": 0,
+            "include": [],
+            "exclude": [],
+            "downloadFiles": true
+        }
+    }
+}
