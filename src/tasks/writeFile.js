@@ -43,7 +43,7 @@ export default function writeFile(fileName, data, dir, extname = 'json', encodin
  * 
  * @async
  * @param {any} object 
- * @returns {String}
+ * @returns {Promise<String>}
  */
 async function convertBigJSONtoString(object) {
     if (!object)
