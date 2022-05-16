@@ -3,11 +3,13 @@ import downloadFile from './downloadFile';
 import { DIR_BY_TYPES } from './initDir';
 import { fileSizeLimit } from '../config';
 import logger from '../logger';
+import processFileStreams from "./processFileStreams";
 
 const AMOUNT_PAUSE = 5;
 
 export default async function downloadAttachments(messages, userSession, dialogId, dialogType) {
     let tasks = [];
+    const relativePath = path.join(DIR_BY_TYPES[dialogType], dialogId, 'files');
 
     for (const message of (messages || [])) {
         if (!Array.isArray(message.files))
@@ -34,16 +36,12 @@ export default async function downloadAttachments(messages, userSession, dialogI
                 }
     
                 const extName = file.filetype ? `.${file.filetype}` : path.extname(file.name);
-                const relativePath = path.join(DIR_BY_TYPES[dialogType], dialogId, 'files');
     
-                tasks.push(downloadFile(file.url_private_download, relativePath, userSession, file.id, extName).then((fName) => {
-                    logger.info(`File (${path.join(relativePath, fName)}) successfully downloaded!`);
-                }, (e) => {
-                    logger.warn(`File (${path.join(relativePath, `${file.id}${extName}`)}) something went wrong: ${e.stack}`);
-                }));
+                tasks.push(downloadFile(file.url_private_download, relativePath, userSession, file.id, extName));
     
+                // TODO: снимаю временно ограничение на кол-во файлов
                 if (tasks.length >= AMOUNT_PAUSE) {
-                    await Promise.all(tasks);
+                    await processFileStreams(tasks, relativePath);
                     tasks = [];
                 }
             } catch(e) {
@@ -52,5 +50,6 @@ export default async function downloadAttachments(messages, userSession, dialogI
         }
     }
 
-    return await Promise.all(tasks);
+    return await processFileStreams(tasks, relativePath);
 }
+

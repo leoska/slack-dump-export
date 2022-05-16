@@ -1,0 +1,41 @@
+version: '3.1'
+
+networks:
+  sde-network:
+    external: false
+
+services:
+  slack-dump-export:
+    image: slack-dump-export:latest
+    stdin_open: true
+    tty: true
+    hostname: slack-dump-export
+    restart: "no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./src:/app/src:ro
+      - ./settings.json:/app/settings.json:ro
+      - ./index.js:/app/index.js:ro
+      - ./data:/app/data:rw
+    ports:
+      - "25565:25565"
+    networks:
+      - sde-network
+    depends_on:
+      - mongodb
+  
+  mongodb:
+    image: mongo:4.4.6
+    hostname: mongodb
+    command: --wiredTigerCacheSizeGB 1
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./mongodb:/data/db:rw
+    ports:
+      - "192.168.65.74:27018:27017"
+    networks:
+      - sde-network
+    logging:
+      options:
+        max-size: 50m

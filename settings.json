@@ -1,7 +1,7 @@
 {
     "userName": "",
     "token": "",
-    "fileSizeLimit": 20971520,
+    "fileSizeLimit": 104857600,
     "downloadAvatars": true,
     "filter": {
         "ims": {
@@ -32,5 +32,16 @@
             "exclude": [],
             "downloadFiles": true
         }
-    }
+    },
+    "mongo": {
+        "enabled": true,
+        "host": "mongodb",
+        "port": 27017,
+        "db": "slack"
+    },
+    "autoUpdate": {
+        "enabled": true,
+        "refresh": 900000
+    },
+    "port": 25565
 }

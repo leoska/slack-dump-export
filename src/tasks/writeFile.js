@@ -24,8 +24,8 @@ export default function writeFile(fileName, data, dir, extname = 'json', encodin
 
                 const fName = `${fileName}${extname ? `.${extname}` : ''}`;
                 const filePath = path.resolve(basePath, fName);
-
-                fs.writeFile(filePath, await convertBigJSONtoString(data), { encoding }, (err) => {
+                
+                fs.writeFile(filePath, extname === 'json' ?  await convertBigJSONtoString(data) : data, { encoding }, (err) => {
                     if (err)
                         throw err;
     

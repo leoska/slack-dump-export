@@ -38,7 +38,18 @@ const configDefault = {
             exclude: [],
             downloadFiles: true,
         }
-    }
+    },
+    mongo: {
+        enabled: true,
+        host: "mongodb",
+        port: 27017,
+        db: "slack"
+    },
+    autoUpdate: {
+        enabled: true,
+        refresh: 15
+    },
+    port: 25565 // Server's HTTP port
 };
 
 let configObj = Object.assign({}, configDefault);
@@ -49,7 +60,7 @@ try {
     if (!configFile)
         throw new Error(`[Config] settings.json is undefined or null.`);
 
-    if (!typeof(configFile) === 'object')
+    if (typeof(configFile) !== 'object')
         throw new Error(`[Config] settings.json type is [${typeof(configFile)}] but expected object.`);
 
     configObj = Object.assign(configObj, configFile);
@@ -58,7 +69,7 @@ try {
     console.error(colors.red(e.stack));
 }
 
-const { userName, token, fileSizeLimit, downloadAvatars, filter } = configObj;
+const { userName, token, fileSizeLimit, downloadAvatars, filter, mongo, autoUpdate } = configObj;
 
 export { 
     userName, 
@@ -66,4 +77,6 @@ export {
     fileSizeLimit, 
     downloadAvatars, 
     filter,
+    mongo,
+    autoUpdate,
 };
