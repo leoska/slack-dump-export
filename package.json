@@ -1,11 +1,12 @@
 {
   "name": "slack-dump-export",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A node slack exporter for public, private channels and mpims, ims with avatars and attachments",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node index.js"
+    "start": "babel-node index.js",
+    "watch": "nodemon --exec babel-node index.js"
   },
   "repository": {
     "type": "git",
@@ -17,12 +18,15 @@
     "axios": "^0.26.1",
     "colors": "^1.4.0",
     "crypto": "^1.0.1",
+    "lodash": "^4.17.21",
+    "mongodb": "^4.4.1",
     "path": "^0.12.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.7",
     "@babel/node": "^7.16.8",
-    "@babel/preset-env": "^7.16.11"
+    "@babel/preset-env": "^7.16.11",
+    "nodemon": "^2.0.15"
   }
 }

@@ -6,9 +6,10 @@ import path from 'path';
 import writeFile from "./writeFile";
 import fs from 'fs';
 import logger from "../logger";
+import { autoUpdate } from '../config';
 
 // Sleep in ms between API requests
-const SLEEP_TIMEOUT_MS = 200;
+const SLEEP_TIMEOUT_MS = 50;
 
 // Limit history parameter
 const LIMIT_HISTORY = 1000;
@@ -63,7 +64,10 @@ export default async function conversation(dialog, userSession, latestStamp = 0)
     
         const relativePath = path.join(parentFolder, dialog.id, 'data');
     
-        await writeFile(relativePath, messages, userSession);
+        // Currently, not supported in daemon mode
+        if (!autoUpdate.enabled)
+            await writeFile(relativePath, messages, userSession);
+        
         logger.info(`Successfully exported chat history [${dialog.id}] ${dialogName}`);
 
         return messages;
@@ -109,9 +113,24 @@ async function getData(dialog, latest, amountTry = 0) {
  * @returns {Promise<void>}
  */
 async function initSubDir(basePath) {
-    await fs.promises.mkdir(basePath);
+    await fs.promises.mkdir(basePath).catch((err) => {
+        // Ignore is already exist
+        if (err.code === 'EEXIST') {
+            logger.warn(`[conversation -> initSubDir] dir [${basePath}] is already exists`);
+            return;
+        }
+        
+        throw err;
+    });
 
-    return await Promise.all([
-        fs.promises.mkdir(path.resolve(basePath, 'files'))
-    ]);
+    const filesDir = path.join(basePath, 'files');
+    await fs.promises.mkdir(filesDir).catch((err) => {
+        // Ignore is already exist
+        if (err.code === 'EEXIST') {
+            logger.warn(`[conversation -> initSubDir] dir [${filesDir}] is already exists`);
+            return;
+        }
+
+        throw err;
+    });
 }

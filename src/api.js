@@ -4,10 +4,10 @@ import timeout from './tasks/timeout';
 import logger from './logger';
 
 // Таймаут запроса
-const TIMEOUT_ATTEMPT_CALLAPI = 120000;
+const TIMEOUT_ATTEMPT_CALL_API = 120000;
 const BASE_URL = `https://slack.com/api/`;
 
-const AMOUNT_ATTEMTP_COUNT = 3;
+const AMOUNT_ATTEMPT_COUNT = 3;
 const DEFAULT_RETRY_AFTER = 3600;
 
 export default async function api(endpoint, method = 'get', params = {}, amountTry = 0) {
@@ -18,7 +18,7 @@ export default async function api(endpoint, method = 'get', params = {}, amountT
             params,
             responseType: 'json',
             responseEncoding: 'utf-8',
-            timeout: TIMEOUT_ATTEMPT_CALLAPI,
+            timeout: TIMEOUT_ATTEMPT_CALL_API,
             headers: { 
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
                 "Authorization": `Bearer ${token}`,
@@ -38,7 +38,7 @@ export default async function api(endpoint, method = 'get', params = {}, amountT
     } catch(e) {
         // Timeout has reached (try again)
         if (e.message.indexOf('timeout of') > -1) {
-            if (amountTry < AMOUNT_ATTEMTP_COUNT) {
+            if (amountTry < AMOUNT_ATTEMPT_COUNT) {
                 logger.warn(`Api [${endpoint}] has reached timeout, try again to call. Attempt: [${++amountTry}]`);
                 await timeout(50);
                 return await api(endpoint, method, params, amountTry);
@@ -47,7 +47,7 @@ export default async function api(endpoint, method = 'get', params = {}, amountT
         
         // 429 Too Many Requests
         if (e.response && e.response.status === 429) {
-            if (amountTry < AMOUNT_ATTEMTP_COUNT) {
+            if (amountTry < AMOUNT_ATTEMPT_COUNT) {
                 logger.warn(`Api [${endpoint}] has status code 429, try again to call. Attempt: [${++amountTry}]`);
                 await timeout(e.response.headers && e.response.headers['retry-after'] || DEFAULT_RETRY_AFTER);
                 return await api(endpoint, method, params, amountTry);
